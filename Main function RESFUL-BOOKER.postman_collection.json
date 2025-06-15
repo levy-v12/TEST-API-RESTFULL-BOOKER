@@ -1,0 +1,1203 @@
+{
+	"info": {
+		"_postman_id": "7dd08747-ec81-4bfc-aacb-6b05f558d830",
+		"name": "Main function RESFUL-BOOKER",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "44674685",
+		"_collection_link": "https://www.postman.com/levy-6149908/workspace/test-restfull-booker-api/collection/44674685-7dd08747-ec81-4bfc-aacb-6b05f558d830?action=share&source=collection_link&creator=44674685"
+	},
+	"item": [
+		{
+			"name": "Createbooking",
+			"item": [
+				{
+					"name": "Create Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"//kiểm tra thời gian phản hồi nhỏ hơn 2s \r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//kiểm tra kiểu dữ liệu các trường được trả về là đúng kiểu schema \r",
+									"// Định nghĩa JSON Schema để kiểm tra kiểu dữ liệu\r",
+									"const schema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"bookingid\": { \"type\": \"number\" },\r",
+									"        \"booking\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"firstname\": { \"type\": \"string\" },\r",
+									"                \"lastname\": { \"type\": \"string\" },\r",
+									"                \"totalprice\": { \"type\": \"number\" },\r",
+									"                \"depositpaid\": { \"type\": \"boolean\" },\r",
+									"                \"bookingdates\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"checkin\": { \"type\": \"string\" },\r",
+									"                        \"checkout\": { \"type\": \"string\" }\r",
+									"                    },\r",
+									"                    \"required\":[\"checkin\", \"checkout\"]\r",
+									"                },\r",
+									"                \"additionalNeeds\": { \"type\": \"string\" }\r",
+									"            },\r",
+									"            \"required\": [\"firstname\", \"lastname\", \"totalprice\", \"depositpaid\", \"bookingdates\"]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"bookingid\", \"booking\"]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Schema is valid\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									" \r",
+									"\r",
+									"// lưu giá trị response dưới dạng json  \r",
+									"const apiResponse = pm.response.json(); // chuyển đổi response thành json\r",
+									"\r",
+									"// lấy giá trị từ response và lưu vào biến cục bộ trong script \r",
+									"const firstName_response = apiResponse.booking.firstname; // dẫn đúng dòng dữ liệu từ mẫu response api create booking\r",
+									"const lastName_response = apiResponse.booking.lastname;\r",
+									"const totalprice_response = apiResponse.booking.totalprice;\r",
+									"const depositpaid_response = apiResponse.booking.depositpaid;\r",
+									"const checkinDate_response = apiResponse.booking.bookingdates.checkin;\r",
+									"const checkoutDate_response = apiResponse.booking.bookingdates.checkout;\r",
+									"const additionalNeeds_response = apiResponse.booking.additionalneeds;\r",
+									"\r",
+									"// Lấy giá trị biến động đã đặt từ collections variables và lưu vào biến output\r",
+									"const firstName_output = pm.collectionVariables.get(\"dataFirstName\");\r",
+									"const lastName_output = pm.collectionVariables.get(\"dataLastName\");\r",
+									"const totalprice_output = pm.collectionVariables.get(\"dataTotalPrice\");\r",
+									"const depositpaid_output = pm.collectionVariables.get(\"dataDepositPaid\");\r",
+									"const checkinDate_output = pm.collectionVariables.get(\"dataCheckinDate\");\r",
+									"const checkoutDate_output = pm.collectionVariables.get(\"dataCheckoutDate\");\r",
+									"const additionalNeeds_output = pm.collectionVariables.get(\"dataAdditionalNeeds\");\r",
+									"\r",
+									"// tạo testcase so sánh từng giá trị response và giá trị collection variables\r",
+									"pm.test(\"check firstname\", function () {\r",
+									"    pm.expect(firstName_response).to.eql(firstName_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check lastname\", function () {\r",
+									"    pm.expect(lastName_response).to.eql(lastName_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check totalprice\", function () {\r",
+									"    pm.expect(totalprice_response.toString()).to.eql(totalprice_output); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"check depositpaid\", function () {\r",
+									"    pm.expect(depositpaid_response.toString()).to.be.eql(depositpaid_output); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"check checkinDate\", function () {\r",
+									"    pm.expect(checkinDate_response).to.eql(checkinDate_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check checkoutDate\", function () {\r",
+									"    pm.expect(checkoutDate_response).to.eql(checkoutDate_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check additionalNeeds\", function () {\r",
+									"    pm.expect(additionalNeeds_response).to.eql(additionalNeeds_output);\r",
+									"});\r",
+									"\r",
+									"// lưu bookingid vào collection variables\r",
+									"pm.collectionVariables.set(\"bookingid\", apiResponse.bookingid);\r",
+									"console.log(apiResponse.bookingid);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\" : \"{{dataFirstName}}\",\n    \"lastname\" : \"{{dataLastName}}\",\n    \"totalprice\" : {{dataTotalPrice}},\n    \"depositpaid\" : {{dataDepositPaid}},\n    \"bookingdates\" : {\n        \"checkin\" : \"{{dataCheckinDate}}\",\n        \"checkout\" : \"{{dataCheckoutDate}}\"\n    },\n    \"additionalneeds\" : \"{{dataAdditionalNeeds}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/booking"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking IDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"//kiểm tra thời gian phản hồi nhỏ hơn 2s \r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"response body contains 'bookingid' created before \", () => {\r",
+									"    const bookingID = pm.variables.get(\"bookingid\");    //lưu bookingid đã tạo vào biến bookingID\r",
+									"    console.log(bookingID);\r",
+									"    pm.expect(pm.response.text()).to.include(bookingID);  //kết quả trả về phải có giá trị bookingID\r",
+									"});\r",
+									"\r",
+									"pm.test(\"response time is less than 5000ms\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{HOST}}/booking"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"response time is less than 5000ms\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+									"}); \r",
+									"//kiểm tra thời gian phản hồi nhỏ hơn 2s \r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"//kiểm tra kiểu dữ liệu các trường được trả về là đúng kiểu schema \r",
+									"// Định nghĩa JSON Schema để kiểm tra kiểu dữ liệu\r",
+									"const schema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"firstname\": { \"type\": \"string\" },\r",
+									"        \"lastname\": { \"type\": \"string\" },\r",
+									"        \"totalprice\": { \"type\": \"number\" },\r",
+									"        \"depositpaid\": { \"type\": \"boolean\" },\r",
+									"        \"bookingdates\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"checkin\": { \"type\": \"string\" },\r",
+									"                \"checkout\": { \"type\": \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        \"additionalneeds\": { \"type\": \"string\" } // Fixed property name to match response\r",
+									"    },\r",
+									"    \"required\": [\"firstname\", \"lastname\", \"totalprice\", \"depositpaid\", \"bookingdates\"]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Schema is valid\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"}); \r",
+									"\r",
+									"//chuyển đổi dữ liệu sang dạng json\r",
+									"let apiResponse;\r",
+									"try {\r",
+									"    apiResponse = pm.response.json(); \r",
+									"} catch (e) {\r",
+									"    pm.test(\"JSON parsing error\", () => {\r",
+									"        pm.expect.fail(\"Response is not valid JSON\");\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"//nếu dạng json hợp lệ thì so sánh dữ liệu  \r",
+									"\r",
+									"    //lấy giá trị từ response \r",
+									"    const firstName_response = apiResponse.firstname; \r",
+									"    const lastName_response = apiResponse.lastname;\r",
+									"    const totalprice_response = apiResponse.totalprice;\r",
+									"    const depositpaid_response = apiResponse.depositpaid;\r",
+									"    const checkinDate_response = apiResponse.bookingdates.checkin;\r",
+									"    const checkoutDate_response = apiResponse.bookingdates.checkout;\r",
+									"    const additionalNeeds_response = apiResponse.additionalneeds;\r",
+									"\r",
+									"//lấy giá trị từ các biến mong đợi đã đặt trước trong collection variables \r",
+									"    const firstName_output = pm.collectionVariables.get(\"dataFirstName\");\r",
+									"    const lastName_output = pm.collectionVariables.get(\"dataLastName\");\r",
+									"    const totalprice_output = pm.collectionVariables.get(\"dataTotalPrice\");\r",
+									"    const depositpaid_output = pm.collectionVariables.get(\"dataDepositPaid\");\r",
+									"    const checkinDate_output = pm.collectionVariables.get(\"dataCheckinDate\");\r",
+									"    const checkoutDate_output = pm.collectionVariables.get(\"dataCheckoutDate\");\r",
+									"    const additionalNeeds_output = pm.collectionVariables.get(\"dataAdditionalNeeds\");\r",
+									"\r",
+									"//so sánh giá trị từ response với giá trị mong đợi trong collection variables \r",
+									"    pm.test(\"firstname is correct\", () => {\r",
+									"        pm.expect(firstName_response).to.eql(firstName_output);\r",
+									"    });\r",
+									"    pm.test(\"lastname is correct\", () => {\r",
+									"        pm.expect(lastName_response).to.eql(lastName_output);\r",
+									"    });\r",
+									"    pm.test(\"totalprice is correct\", () => {\r",
+									"        pm.expect(totalprice_response.toString()).to.eql(totalprice_output);\r",
+									"    });\r",
+									"    pm.test(\"depositpaid is correct\", () => {\r",
+									"        pm.expect(depositpaid_response.toString()).to.eql(depositpaid_output);\r",
+									"    });\r",
+									"    pm.test(\"checkinDate is correct\", () => {\r",
+									"        pm.expect(checkinDate_response).to.eql(checkinDate_output);\r",
+									"    });\r",
+									"    pm.test(\"checkoutDate is correct\", () => {\r",
+									"        pm.expect(checkoutDate_response).to.eql(checkoutDate_output);\r",
+									"    });\r",
+									"    pm.test(\"additionalNeeds is correct\", () => {\r",
+									"        pm.expect(additionalNeeds_response).to.eql(additionalNeeds_output);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/booking/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bookingid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update booking",
+			"item": [
+				{
+					"name": "Create Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//kiểm tra kiểu dữ liệu các trường được trả về là đúng kiểu schema \r",
+									"// Định nghĩa JSON Schema để kiểm tra kiểu dữ liệu\r",
+									"const schema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"bookingid\": { \"type\": \"number\" },\r",
+									"        \"booking\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"firstname\": { \"type\": \"string\" },\r",
+									"                \"lastname\": { \"type\": \"string\" },\r",
+									"                \"totalprice\": { \"type\": \"number\" },\r",
+									"                \"depositpaid\": { \"type\": \"boolean\" },\r",
+									"                \"bookingdates\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"checkin\": { \"type\": \"string\" },\r",
+									"                        \"checkout\": { \"type\": \"string\" }\r",
+									"                    },\r",
+									"                    \"required\":[\"checkin\", \"checkout\"]\r",
+									"                },\r",
+									"                \"additionalNeeds\": { \"type\": \"string\" }\r",
+									"            },\r",
+									"            \"required\": [\"firstname\", \"lastname\", \"totalprice\", \"depositpaid\", \"bookingdates\"]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"bookingid\", \"booking\"]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Schema is valid\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									" \r",
+									"\r",
+									"// lưu giá trị response dưới dạng json  \r",
+									"const apiResponse = pm.response.json(); // chuyển đổi response thành json\r",
+									"\r",
+									"// lấy giá trị từ response và lưu vào biến cục bộ trong script \r",
+									"const firstName_response = apiResponse.booking.firstname; // dẫn đúng dòng dữ liệu từ mẫu response api create booking\r",
+									"const lastName_response = apiResponse.booking.lastname;\r",
+									"const totalprice_response = apiResponse.booking.totalprice;\r",
+									"const depositpaid_response = apiResponse.booking.depositpaid;\r",
+									"const checkinDate_response = apiResponse.booking.bookingdates.checkin;\r",
+									"const checkoutDate_response = apiResponse.booking.bookingdates.checkout;\r",
+									"const additionalNeeds_response = apiResponse.booking.additionalneeds;\r",
+									"\r",
+									"// Lấy giá trị biến động đã đặt từ collections variables và lưu vào biến output\r",
+									"const firstName_output = pm.collectionVariables.get(\"dataFirstName\");\r",
+									"const lastName_output = pm.collectionVariables.get(\"dataLastName\");\r",
+									"const totalprice_output = pm.collectionVariables.get(\"dataTotalPrice\");\r",
+									"const depositpaid_output = pm.collectionVariables.get(\"dataDepositPaid\");\r",
+									"const checkinDate_output = pm.collectionVariables.get(\"dataCheckinDate\");\r",
+									"const checkoutDate_output = pm.collectionVariables.get(\"dataCheckoutDate\");\r",
+									"const additionalNeeds_output = pm.collectionVariables.get(\"dataAdditionalNeeds\");\r",
+									"\r",
+									"// tạo testcase so sánh từng giá trị response và giá trị collection variables\r",
+									"pm.test(\"check firstname\", function () {\r",
+									"    pm.expect(firstName_response).to.eql(firstName_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check lastname\", function () {\r",
+									"    pm.expect(lastName_response).to.eql(lastName_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check totalprice\", function () {\r",
+									"    pm.expect(totalprice_response.toString()).to.eql(totalprice_output); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"check depositpaid\", function () {\r",
+									"    pm.expect(depositpaid_response.toString()).to.be.eql(depositpaid_output); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"check checkinDate\", function () {\r",
+									"    pm.expect(checkinDate_response).to.eql(checkinDate_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check checkoutDate\", function () {\r",
+									"    pm.expect(checkoutDate_response).to.eql(checkoutDate_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check additionalNeeds\", function () {\r",
+									"    pm.expect(additionalNeeds_response).to.eql(additionalNeeds_output);\r",
+									"});\r",
+									"\r",
+									"// lưu bookingid vào collection variables\r",
+									"pm.collectionVariables.set(\"bookingid\", apiResponse.bookingid);\r",
+									"console.log(apiResponse.bookingid);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\" : \"{{dataFirstName}}\",\n    \"lastname\" : \"{{dataLastName}}\",\n    \"totalprice\" : {{dataTotalPrice}},\n    \"depositpaid\" : {{dataDepositPaid}},\n    \"bookingdates\" : {\n        \"checkin\" : \"{{dataCheckinDate}}\",\n        \"checkout\" : \"{{dataCheckoutDate}}\"\n    },\n    \"additionalneeds\" : \"{{dataAdditionalNeeds}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/booking"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"}); \r",
+									"\r",
+									"//kiểm tra thời gian phản hồi nhỏ hơn 2s \r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"//Lưu token trả về vào biến toàn cục token\r",
+									"const response = pm.response.json(); \r",
+									"const token = response.token;\r",
+									"\r",
+									"pm.globals.set(\"token value\", token);\r",
+									"console.log(\"token value\", token);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/auth"
+					},
+					"response": []
+				},
+				{
+					"name": "Update booking full",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"status code is 200\", () =>{\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"//kiểm tra thời gian phản hồi nhỏ hơn 2s \r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"let apiResponse;\r",
+									"\r",
+									"try {\r",
+									"    const contentType = pm.response.headers.get(\"Content-Type\") || \"\";\r",
+									"\r",
+									"    if (contentType.includes(\"application/json\")) {\r",
+									"        apiResponse = pm.response.json(); // chuyển đổi sang JSON\r",
+									"        console.log(\"Parsed JSON response:\", apiResponse);\r",
+									"    } else {\r",
+									"        throw new Error(\"Response is not JSON\");\r",
+									"    }\r",
+									"\r",
+									"} catch (error) {\r",
+									"    console.warn(\"Could not parse response as JSON:\", pm.response.text());\r",
+									"    pm.test(\"Response is valid JSON\", function () {\r",
+									"        pm.expect.fail(\"Response is not valid JSON\");\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"// Ensure apiResponse is defined before accessing its properties\r",
+									"if (apiResponse) {\r",
+									"    const firstName_response = apiResponse.firstname; // corrected the path to access firstname\r",
+									"    const lastName_response = apiResponse.lastname;\r",
+									"    const totalprice_response = apiResponse.totalprice;\r",
+									"    const depositpaid_response = apiResponse.depositpaid;\r",
+									"    const checkinDate_response = apiResponse.bookingdates.checkin;\r",
+									"    const checkoutDate_response = apiResponse.bookingdates.checkout;\r",
+									"    const additionalNeeds_response = apiResponse.additionalneeds;\r",
+									"\r",
+									"    // Lấy giá trị biến động đã đặt từ collections variables và lưu vào biến output\r",
+									"    const firstName_output = pm.collectionVariables.get(\"updateFirstName\");\r",
+									"    const lastName_output = pm.collectionVariables.get(\"updateLastName\");\r",
+									"    const totalprice_output = pm.collectionVariables.get(\"updateTotalPrice\");\r",
+									"    const depositpaid_output = pm.collectionVariables.get(\"updateDepositPaid\");\r",
+									"    const checkinDate_output = pm.collectionVariables.get(\"updateCheckinDate\");\r",
+									"    const checkoutDate_output = pm.collectionVariables.get(\"updateCheckoutDate\");\r",
+									"    const additionalNeeds_output = pm.collectionVariables.get(\"updateAdditionalNeeds\");\r",
+									"\r",
+									"    // tạo testcase so sánh từng giá trị response và giá trị collection variables\r",
+									"    pm.test(\"check firstname\", function () {\r",
+									"        pm.expect(firstName_response).to.eql(firstName_output);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"check lastname\", function () {\r",
+									"        pm.expect(lastName_response).to.eql(lastName_output);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"check totalprice\", function () {\r",
+									"        pm.expect(totalprice_response.toString()).to.eql(totalprice_output); \r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"check depositpaid\", function () {\r",
+									"        pm.expect(depositpaid_response.toString()).to.be.eql(depositpaid_output); \r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"check checkinDate\", function () {\r",
+									"        pm.expect(checkinDate_response).to.eql(checkinDate_output);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"check checkoutDate\", function () {\r",
+									"        pm.expect(checkoutDate_response).to.eql(checkoutDate_output);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"check additionalNeeds\", function () {\r",
+									"        pm.expect(additionalNeeds_response).to.eql(additionalNeeds_output);\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{token value}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstname\": \"{{updateFirstName}}\",\r\n  \"lastname\": \"{{updateLastName}}\",\r\n  \"totalprice\": {{updateTotalPrice}},\r\n  \"depositpaid\": {{updateDepositPaid}},\r\n  \"bookingdates\": {\r\n    \"checkin\": \"{{updateCheckinDate}}\",\r\n    \"checkout\": \"{{updateCheckoutDate}}\"\r\n  },\r\n  \"additionalneeds\": \"{{updateAdditionalNeeds}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/booking/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bookingid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"response time is less than 5000ms\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+									"}); \r",
+									"\r",
+									"\r",
+									"//kiểm tra kiểu dữ liệu các trường được trả về là đúng kiểu schema \r",
+									"// Định nghĩa JSON Schema để kiểm tra kiểu dữ liệu\r",
+									"const schema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"firstname\": { \"type\": \"string\" },\r",
+									"        \"lastname\": { \"type\": \"string\" },\r",
+									"        \"totalprice\": { \"type\": \"number\" },\r",
+									"        \"depositpaid\": { \"type\": \"boolean\" },\r",
+									"        \"bookingdates\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"checkin\": { \"type\": \"string\" },\r",
+									"                \"checkout\": { \"type\": \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        \"additionalNeeds\": { \"type\": \"string\" }\r",
+									"    },\r",
+									"    \"required\": [\"firstname\", \"lastname\", \"totalprice\", \"depositpaid\", \"bookingdates\"]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Schema is valid\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"}); \r",
+									"\r",
+									"//chuyển đổi dữ liệu sang dạng json\r",
+									"let apiResponse;\r",
+									"try {\r",
+									"    apiResponse = pm.response.json(); \r",
+									"} catch (e) {\r",
+									"    pm.test(\"JSON parsing error\", () => {\r",
+									"        pm.expect.fail(\"Response is not valid JSON\");\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"//nếu dạng json hợp lệ thì so sánh dữ liệu  \r",
+									"    //lấy giá trị từ response \r",
+									"    const firstName_response = apiResponse.firstname; \r",
+									"    const lastName_response = apiResponse.lastname;\r",
+									"    const totalprice_response = apiResponse.totalprice;\r",
+									"    const depositpaid_response = apiResponse.depositpaid;\r",
+									"    const checkinDate_response = apiResponse.bookingdates.checkin;\r",
+									"    const checkoutDate_response = apiResponse.bookingdates.checkout;\r",
+									"    const additionalNeeds_response = apiResponse.additionalneeds;\r",
+									"\r",
+									"//lấy giá trị từ các biến mong đợi đã đặt trước trong collection variables \r",
+									"    const firstName_output = pm.collectionVariables.get(\"updateFirstName\");\r",
+									"    const lastName_output = pm.collectionVariables.get(\"updateLastName\");\r",
+									"    const totalprice_output = pm.collectionVariables.get(\"updateTotalPrice\");\r",
+									"    const depositpaid_output = pm.collectionVariables.get(\"updateDepositPaid\");\r",
+									"    const checkinDate_output = pm.collectionVariables.get(\"updateCheckinDate\");\r",
+									"    const checkoutDate_output = pm.collectionVariables.get(\"updateCheckoutDate\");\r",
+									"    const additionalNeeds_output = pm.collectionVariables.get(\"updateAdditionalNeeds\");\r",
+									"\r",
+									"\r",
+									"//TC so sánh giá trị từ response với giá trị mong đợi trong collection variables \r",
+									"    pm.test(\"firstname is correct\", () => {\r",
+									"        pm.expect(firstName_response).to.eql(firstName_output);\r",
+									"    });\r",
+									"    pm.test(\"lastname is correct\", () => {\r",
+									"        pm.expect(lastName_response).to.eql(lastName_output);\r",
+									"    });\r",
+									"    pm.test(\"totalprice is correct\", () => {\r",
+									"        pm.expect(totalprice_response.toString()).to.eql(totalprice_output);\r",
+									"    });\r",
+									"    pm.test(\"depositpaid is correct\", () => {\r",
+									"        pm.expect(depositpaid_response.toString()).to.eql(depositpaid_output);\r",
+									"    });\r",
+									"    pm.test(\"checkinDate is correct\", () => {\r",
+									"        pm.expect(checkinDate_response).to.eql(checkinDate_output);\r",
+									"    });\r",
+									"    pm.test(\"checkoutDate is correct\", () => {\r",
+									"        pm.expect(checkoutDate_response).to.eql(checkoutDate_output);\r",
+									"    });\r",
+									"    pm.test(\"additionalNeeds is correct\", () => {\r",
+									"        pm.expect(additionalNeeds_response).to.eql(additionalNeeds_output);\r",
+									"    });\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/booking/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bookingid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "basic",
+				"basic": {
+					"password": "{{vault:authorization-password}}",
+					"username": "admin"
+				}
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Delete Booking",
+			"item": [
+				{
+					"name": "Create Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//kiểm tra kiểu dữ liệu các trường được trả về là đúng kiểu schema \r",
+									"// Định nghĩa JSON Schema để kiểm tra kiểu dữ liệu\r",
+									"const schema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"bookingid\": { \"type\": \"number\" },\r",
+									"        \"booking\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"firstname\": { \"type\": \"string\" },\r",
+									"                \"lastname\": { \"type\": \"string\" },\r",
+									"                \"totalprice\": { \"type\": \"number\" },\r",
+									"                \"depositpaid\": { \"type\": \"boolean\" },\r",
+									"                \"bookingdates\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"checkin\": { \"type\": \"string\" },\r",
+									"                        \"checkout\": { \"type\": \"string\" }\r",
+									"                    },\r",
+									"                    \"required\":[\"checkin\", \"checkout\"]\r",
+									"                },\r",
+									"                \"additionalNeeds\": { \"type\": \"string\" }\r",
+									"            },\r",
+									"            \"required\": [\"firstname\", \"lastname\", \"totalprice\", \"depositpaid\", \"bookingdates\"]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"bookingid\", \"booking\"]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Schema is valid\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									" \r",
+									"\r",
+									"// lưu giá trị response dưới dạng json  \r",
+									"const apiResponse = pm.response.json(); // chuyển đổi response thành json\r",
+									"\r",
+									"// lấy giá trị từ response và lưu vào biến cục bộ trong script \r",
+									"const firstName_response = apiResponse.booking.firstname; // dẫn đúng dòng dữ liệu từ mẫu response api create booking\r",
+									"const lastName_response = apiResponse.booking.lastname;\r",
+									"const totalprice_response = apiResponse.booking.totalprice;\r",
+									"const depositpaid_response = apiResponse.booking.depositpaid;\r",
+									"const checkinDate_response = apiResponse.booking.bookingdates.checkin;\r",
+									"const checkoutDate_response = apiResponse.booking.bookingdates.checkout;\r",
+									"const additionalNeeds_response = apiResponse.booking.additionalneeds;\r",
+									"\r",
+									"// Lấy giá trị biến động đã đặt từ collections variables và lưu vào biến output\r",
+									"const firstName_output = pm.collectionVariables.get(\"dataFirstName\");\r",
+									"const lastName_output = pm.collectionVariables.get(\"dataLastName\");\r",
+									"const totalprice_output = pm.collectionVariables.get(\"dataTotalPrice\");\r",
+									"const depositpaid_output = pm.collectionVariables.get(\"dataDepositPaid\");\r",
+									"const checkinDate_output = pm.collectionVariables.get(\"dataCheckinDate\");\r",
+									"const checkoutDate_output = pm.collectionVariables.get(\"dataCheckoutDate\");\r",
+									"const additionalNeeds_output = pm.collectionVariables.get(\"dataAdditionalNeeds\");\r",
+									"\r",
+									"// tạo testcase so sánh từng giá trị response và giá trị collection variables\r",
+									"pm.test(\"check firstname\", function () {\r",
+									"    pm.expect(firstName_response).to.eql(firstName_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check lastname\", function () {\r",
+									"    pm.expect(lastName_response).to.eql(lastName_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check totalprice\", function () {\r",
+									"    pm.expect(totalprice_response.toString()).to.eql(totalprice_output); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"check depositpaid\", function () {\r",
+									"    pm.expect(depositpaid_response.toString()).to.be.eql(depositpaid_output); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"check checkinDate\", function () {\r",
+									"    pm.expect(checkinDate_response).to.eql(checkinDate_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check checkoutDate\", function () {\r",
+									"    pm.expect(checkoutDate_response).to.eql(checkoutDate_output);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check additionalNeeds\", function () {\r",
+									"    pm.expect(additionalNeeds_response).to.eql(additionalNeeds_output);\r",
+									"});\r",
+									"\r",
+									"// lưu bookingid vào collection variables\r",
+									"pm.collectionVariables.set(\"bookingid\", apiResponse.bookingid);\r",
+									"console.log(apiResponse.bookingid);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\" : \"{{dataFirstName}}\",\n    \"lastname\" : \"{{dataLastName}}\",\n    \"totalprice\" : {{dataTotalPrice}},\n    \"depositpaid\" : {{dataDepositPaid}},\n    \"bookingdates\" : {\n        \"checkin\" : \"{{dataCheckinDate}}\",\n        \"checkout\" : \"{{dataCheckoutDate}}\"\n    },\n    \"additionalneeds\" : \"{{dataAdditionalNeeds}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/booking"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"}); \r",
+									"//Lưu token trả về vào biến toàn cục token\r",
+									"const response = pm.response.json(); \r",
+									"const token = response.token;\r",
+									"\r",
+									"pm.globals.set(\"token value\", token);\r",
+									"console.log(\"token value\", token);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/auth"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    });\r",
+									"//kiểm tra thời gian phản hồi nhỏ hơn 2s \r",
+									"pm.test(\"Response time is less than 2000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"    "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token = {{token value}}"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/booking/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bookingid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking IDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//check bookingid đã bị xóa khỏi DB\r",
+									"pm.test(\"status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"response body not contains 'bookingid' created before \", () => {\r",
+									"    const bookingID = pm.variables.get(\"bookingid\");    //lưu bookingid đã tạo vào biến bookingID\r",
+									"    console.log(bookingID); //in ra giá trị bookingID để kiểm tra trong response body\r",
+									"\r",
+									"    pm.expect(pm.response.text()).to.not.include(bookingID);  //kết quả trả về không có giá trị bookingID\r",
+									"}); \r",
+									"\r",
+									"pm.test(\"response time is less than 5000ms\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{HOST}}/booking"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//CHECK THÔNG TIN BOOKING ĐÃ BỊ XÓA TRONG DB\r",
+									"pm.test(\"status code is 404\", () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test(\"response time is less than 5000ms\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/booking/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{bookingid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": {
+			"password": "{{Auth pass}}",
+			"username": "admin"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "dataFirstName",
+			"value": "Lee",
+			"type": "string"
+		},
+		{
+			"key": "dataLastName",
+			"value": "Viz",
+			"type": "string"
+		},
+		{
+			"key": "dataTotalPrice",
+			"value": "999000",
+			"type": "string"
+		},
+		{
+			"key": "dataDepositPaid",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "dataCheckinDate",
+			"value": "2025-01-01",
+			"type": "string"
+		},
+		{
+			"key": "dataCheckoutDate",
+			"value": "2025-01-05",
+			"type": "string"
+		},
+		{
+			"key": "dataAdditionalNeeds",
+			"value": "coffee",
+			"type": "string"
+		},
+		{
+			"key": "bookingid",
+			"value": ""
+		},
+		{
+			"key": "updateFirstName",
+			"value": "Han",
+			"type": "string"
+		},
+		{
+			"key": "updateLastName",
+			"value": "Man",
+			"type": "string"
+		},
+		{
+			"key": "updateTotalPrice",
+			"value": "888000",
+			"type": "string"
+		},
+		{
+			"key": "updateDepositPaid",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "updateCheckinDate",
+			"value": "2025-01-08",
+			"type": "string"
+		},
+		{
+			"key": "updateCheckoutDate",
+			"value": "2025-01-10",
+			"type": "string"
+		},
+		{
+			"key": "updateAdditionalNeeds",
+			"value": "breakfast",
+			"type": "string"
+		},
+		{
+			"key": "Authorization",
+			"value": "YWRtaW46cGFzc3dvcmQxMjM=",
+			"type": "string"
+		}
+	]
+}
